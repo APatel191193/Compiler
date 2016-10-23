@@ -1,0 +1,29 @@
+----------------- State 0 --------------------
+P' #P
+P #L
+L #L D
+L #D
+D #Vd
+D #Fn
+Vd #Ts id ;
+Vd #Ts id [ num ] ;
+Fn #Ts id ( Ps ) Cs
+Fn #Ts main ( Ps ) Cs
+Ts #int
+Ts #void
+
+----------------- State 1 --------------------
+P' P #
+
+----------------- State 2 --------------------
+P L #
+L L #D
+D #Vd
+D #Fn
+Vd #Ts id ;
+Vd #Ts id [ num ] ;
+Fn #Ts id ( Ps ) Cs
+Fn #Ts main ( Ps ) Cs
+Ts #int
+Ts #void
+

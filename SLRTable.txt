@@ -1,0 +1,66 @@
+------------ State 0 --------------
+Symbol int
+Command S
+Number 7
+
+Symbol void
+Command S
+Number 8
+
+Symbol P
+Command G
+Number 1
+
+Symbol L
+Command G
+Number 2
+
+Symbol D
+Command G
+Number 3
+
+Symbol Vd
+Command G
+Number 4
+
+Symbol Fn
+Command G
+Number 5
+
+Symbol Ts
+Command G
+Number 6
+
+------------ State 1 --------------
+Symbol $
+Command accept
+
+------------ State 2 --------------
+Symbol int
+Command S
+Number 7
+
+Symbol void
+Command S
+Number 8
+
+Symbol $
+Command R
+Number 1
+
+Symbol D
+Command G
+Number 9
+
+Symbol Vd
+Command G
+Number 4
+
+Symbol Fn
+Command G
+Number 5
+
+Symbol Ts
+Command G
+Number 6
+

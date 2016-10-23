@@ -1,0 +1,3 @@
+P :: int void
+L :: int void
+D :: int void
