@@ -1,4 +1,5 @@
 package cs4188;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -7,90 +8,118 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Grammar {
-	
 
-	
 	ProductionSet first, follow;
-	List<Production> all;
+	ProductionMap all;
+	List<String> terminals;
 
-	
-	public static Grammar loadGrammar(String file){
-		
-		Grammar g = new Grammar();
-		g.first = new ProductionSet();
-		g.follow = new ProductionSet();
-		g.all = new ArrayList<Production>();
-		
-		try{
+	public Grammar(String grammarFile, String terminalFile) {
+
+		//create production sets and a map to hold all initial productions in the grammar
+		first = new ProductionSet();
+		follow = new ProductionSet();
+		all = new ProductionMap();
+		terminals = new ArrayList<String>();
+
+		//Read the prodution data into invididual productions in this try catch block
+		try {
+
+			// read in grammar productions
 			String line = null;
-			FileReader fr = new FileReader(file);
-
+			FileReader fr = new FileReader(grammarFile);
 			BufferedReader br = new BufferedReader(fr);
-		
-
-			while((line = br.readLine())!= null){
-				String [] production = line.split("::");
+			while ((line = br.readLine()) != null) {
+				String[] production = line.split("::");
 				Production p = new Production(production);
-				g.all.add(p);
+				all.add(p);
 			}
 
 			br.close();
 
-		}
-		catch(FileNotFoundException E){
+			//read in all the non terminals 
+			String line2 = null;
+			FileReader fr2 = new FileReader(terminalFile);
+			BufferedReader br2 = new BufferedReader(fr2);
+			while ((line2 = br2.readLine()) != null) {
+				terminals.add(line2);
+			}
+
+			br2.close();
+
+		} catch (FileNotFoundException E) {
 			System.out.println("File Not Found");
-		}
-		catch(IOException E){
-			System.out.println("Error Reading File");
+		} catch (IOException E) {
+			System.out.println("Error Reading File:" + E.getMessage());
 		}
 
-		/*
-		 * Rules for First Sets
-		If X is a terminal then First(X) is just X!
-		If there is a Production X → ε then add ε to first(X)
-		If there is a Production X → Y1Y2..Yk then add first(Y1Y2..Yk) to first(X)
-		First(Y1Y2..Yk) is either
-		First(Y1) (if First(Y1) doesn't contain ε)
-		OR (if First(Y1) does contain ε) then First (Y1Y2..Yk) is everything in First(Y1) <except for ε > as well as everything in First(Y2..Yk)
-		If First(Y1) First(Y2)..First(Yk) all contain ε then add ε to First(Y1Y2..Yk) as well.
-		*/
-		List<Production> list = g.all;
-		for(Production p: list)
-		{
-			if(p.produces("empty"))g.first.add(p);
-			//else if()
+		//get all the not terminals and find the first and follow for each 
+		List<String> list = all.getAllNonTerminals();
+
+		for (String p : list) {
+			first.add(getFirst(p));
 		}
-		
-		
-		
-	/*
-	 * Rules for Follow Sets
-	First put $ (the end of input marker) in Follow(S) (S is the start symbol)
-	If there is a production A → aBb, (where a can be a whole string) then everything in FIRST(b) except for ε is placed in FOLLOW(B).
-	If there is a production A → aB, then everything in FOLLOW(A) is in FOLLOW(B)
-	If there is a production A → aBb, where FIRST(b) contains ε, then everything in FOLLOW(A) is in FOLLOW(B)
-	*/
-		
-		
-		
-		
-		
-		
-		
-		
-		return g;
+
+		for (String p : list) {
+			//follow.add(getFollow(p));
+		}
+
 	}
-	
-	
-	public List<Production> getFirst(){
-		
+
+	private Production getFollow(String key) {
+
+		//TODO: Implement
+		return null;
+	}
+
+	private Production getFirst(String key) {
+		//create empty production where key is a non terminal that produces other symbols
+		Production prod = new Production(key);
+		// this list will hold all the terminals that is produced by the key
+		List<String> vals = new ArrayList<String>();
+		//find the first of the key and append the terminals to the values list
+		findFirst(key, vals);
+		//add the terminals to the list of produced symbols 
+		prod.addProducedSymbols(vals);
+		return prod;
+	}
+
+	private void findFirst(String symbol, List<String> values) {
+
+		//if the symbol is a terminal or empty then add it to the list
+		if (isTerminal(symbol) || symbol.equals("empty")) {
+			values.add(symbol);
+		} else {
+			//otherwise, if its a non terminal get all the productions for that symbol
+			//and find the first of those
+			List<Production> productions = all.getProductions(symbol);
+			for (Production prods : productions) {
+				String firstSymbol = prods.getProducedSymbol(0);
+				//if the first is the same as the symbol then skip it 
+				if (prods.key.equals(firstSymbol))
+					continue;
+				findFirst(firstSymbol, values);
+			}
+		}
+	}
+
+	boolean isTerminal(String symbol) {
+		//check to see if the symbol is in the list on terminals 
+		for (String s : terminals) {
+
+			if (s.equals(symbol))
+				return true;
+		}
+		return false;
+	}
+
+	public List<Production> getFirst() {
+
 		return first.toList();
 	}
-	
-	public List<Production> getFollow(){
-			
+
+	public List<Production> getFollow() {
+
 		return follow.toList();
 	}
-	
 
 }
